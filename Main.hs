@@ -34,6 +34,7 @@ splitRawCsv = T.splitOn (T.pack "\r\n") . T.pack
 parseRow :: T.Text -> [CsvValue]
 parseRow = map (\v -> readV $ T.unpack v) . splitRow
 
+makePairs :: [T.Text] -> [[CsvValue]] -> [[(T.Text, CsvValue)]]
 makePairs header rows = map (zip header)
   $ filter (\r -> (length r) == (length header)) rows
 
