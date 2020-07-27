@@ -2,9 +2,9 @@ module Main where
 
 import Data.Maybe (fromMaybe)
 import Text.Read (readMaybe)
-import qualified Data.Text as T
+import Data.Text (Text, splitOn, pack, unpack)
 import Control.Applicative ((<|>))
-import qualified Data.List as L
+import Data.List (intercalate)
 import System.Environment (getArgs)
 
 data CsvValue =
@@ -26,23 +26,23 @@ printV (CsvString s)  = show s
 printV (CsvFloat n)   = show n
 printV (CsvInteger n) = show n
 
-splitRow :: T.Text -> [T.Text]
-splitRow = T.splitOn (T.pack ",")
+splitRow :: Text -> [Text]
+splitRow = splitOn (pack ",")
 
-splitRawCsv :: String -> [T.Text]
-splitRawCsv = T.splitOn (T.pack "\r\n") . T.pack
+splitRawCsv :: String -> [Text]
+splitRawCsv = splitOn (pack "\r\n") . pack
 
-parseRow :: T.Text -> [CsvValue]
-parseRow = map (readV . T.unpack) . splitRow
+parseRow :: Text -> [CsvValue]
+parseRow = map (readV . unpack) . splitRow
 
-makePairs :: [T.Text] -> [[CsvValue]] -> [[(T.Text, CsvValue)]]
+makePairs :: [Text] -> [[CsvValue]] -> [[(Text, CsvValue)]]
 makePairs header rows = map (zip header)
   $ filter (((== length header)) . length) rows
 
-makeJson :: [[(T.Text, CsvValue)]] -> String
-makeJson csv = "[" ++ (L.intercalate "," $ map printRow csv) ++ "]"
-  where printRow row     = "{" ++ (L.intercalate "," $ map printPair row) ++ "}"
-        printPair (k, v) = "\"" ++ T.unpack k ++ "\": " ++ printV v
+makeJson :: [[(Text, CsvValue)]] -> String
+makeJson csv = "[" ++ (intercalate "," $ map printRow csv) ++ "]"
+  where printRow row     = "{" ++ (intercalate "," $ map printPair row) ++ "}"
+        printPair (k, v) = "\"" ++ unpack k ++ "\": " ++ printV v
 
 parseCsv :: String -> String
 parseCsv csv = makeJson $ makePairs header rows
