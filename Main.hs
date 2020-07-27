@@ -57,5 +57,5 @@ run input output = do
 
 main :: IO ()
 main = do
-  [input, output] <- getArgs
+  (input:output:_) <- getArgs
   run input output
