@@ -52,7 +52,7 @@ parseCsv csv = makeJson $ makePairs header rows
 
 run :: String -> String -> IO ()
 run input output = do
-  csv                 <- readFile input
+  csv <- readFile input
   writeFile output $ parseCsv csv
 
 main :: IO ()
