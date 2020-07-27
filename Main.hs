@@ -39,17 +39,19 @@ makePairs header rows = map (zip header)
 
 makeJson :: [[(T.Text, CsvValue)]] -> String
 makeJson csv = "[" ++ (L.intercalate "," $ map printRow csv) ++ "]"
-  where printRow row = "{" ++ (L.intercalate "," $ map printPair row) ++ "}"
+  where printRow row     = "{" ++ (L.intercalate "," $ map printPair row) ++ "}"
         printPair (k, v) = "\"" ++ T.unpack k ++ "\": " ++ printV v
 
-
-doIt csv = makeJson $ makePairs (splitRow rawHeader) (map parseRow rawRows)
+parseCsv :: String -> String
+parseCsv csv = makeJson $ makePairs header rows
   where (rawHeader:rawRows) = splitRawCsv csv
+        header              = splitRow rawHeader
+        rows                = map parseRow rawRows
 
 run :: String -> String -> IO ()
 run input output = do
   csv                 <- readFile input
-  writeFile output $ doIt csv
+  writeFile output $ parseCsv csv
 
 main :: IO ()
 main = do
