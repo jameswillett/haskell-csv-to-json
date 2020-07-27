@@ -14,6 +14,7 @@ data CsvValue =
   | CsvNull
   deriving (Show, Eq)
 
+readV :: String -> CsvValue
 readV v = fromMaybe CsvNull
   $   (CsvInteger <$> (readMaybe v :: Maybe Integer))
   <|> (CsvFloat   <$> (readMaybe v :: Maybe Float  ))
