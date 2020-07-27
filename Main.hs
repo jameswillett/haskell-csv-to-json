@@ -37,7 +37,7 @@ parseRow = map (readV . T.unpack) . splitRow
 
 makePairs :: [T.Text] -> [[CsvValue]] -> [[(T.Text, CsvValue)]]
 makePairs header rows = map (zip header)
-  $ filter (\r -> (length r) == (length header)) rows
+  $ filter (((== length header)) . length) rows
 
 makeJson :: [[(T.Text, CsvValue)]] -> String
 makeJson csv = "[" ++ (L.intercalate "," $ map printRow csv) ++ "]"
